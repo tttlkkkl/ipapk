@@ -11,6 +11,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"strconv"
 	"strings"
 
 	"github.com/andrianbdn/iospng"
@@ -72,18 +73,35 @@ func NewAppParser(name string) (*AppInfo, error) {
 		return nil, err
 	}
 
-	var xmlFile, plistFile, iosIconFile *zip.File
+	var xmlFile, plistFile, iosIconFile, maxIosIconFile *zip.File
+	var x, y int64
 	for _, f := range reader.File {
 		switch {
 		case f.Name == "AndroidManifest.xml":
 			xmlFile = f
 		case reInfoPlist.MatchString(f.Name):
 			plistFile = f
-		case strings.Contains(f.Name, "AppIcon60x60"):
+		case strings.Contains(f.Name, "AppIcon"):
 			iosIconFile = f
+			prexRegexp := regexp.MustCompile(`.+AppIcon-(\d{3}).+`)
+			prexCom := prexRegexp.FindStringSubmatch(f.Name)
+
+			if len(prexCom) == 2 {
+				y, err = strconv.ParseInt(prexCom[1], 10, 64)
+				if err != nil {
+					x = 0
+				}
+				// 取最大的
+				if y > x {
+					x = y
+					maxIosIconFile = f
+				}
+			}
 		}
 	}
-
+	if maxIosIconFile != nil {
+		iosIconFile = maxIosIconFile
+	}
 	ext := filepath.Ext(stat.Name())
 
 	if ext == androidExt {
@@ -183,7 +201,6 @@ func parseIpaFile(plistFile *zip.File) (*AppInfo, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	p := new(iosPlist)
 	decoder := plist.NewDecoder(bytes.NewReader(buf))
 	if err := decoder.Decode(p); err != nil {
