@@ -71,8 +71,8 @@ func TestParseApkFile(t *testing.T) {
 	if err != nil {
 		t.Errorf("got %v want no error", err)
 	}
-	if apk.BundleId != "com.example.helloworld" {
-		t.Errorf("got %v want %v", apk.BundleId, "com.example.helloworld")
+	if apk.BundleID != "com.example.helloworld" {
+		t.Errorf("got %v want %v", apk.BundleID, "com.example.helloworld")
 	}
 	if apk.Version != "1.0" {
 		t.Errorf("got %v want %v", apk.Version, "1.0")
@@ -123,8 +123,8 @@ func TestParseIpaFile(t *testing.T) {
 	if err != nil {
 		t.Errorf("got %v want no error", err)
 	}
-	if ipa.BundleId != "com.kthcorp.helloworld" {
-		t.Errorf("got %v want %v", ipa.BundleId, "com.kthcorp.helloworld")
+	if ipa.BundleID != "com.kthcorp.helloworld" {
+		t.Errorf("got %v want %v", ipa.BundleID, "com.kthcorp.helloworld")
 	}
 	if ipa.Version != "1.0" {
 		t.Errorf("got %v want %v", ipa.Version, "1.0")

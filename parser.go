@@ -1,4 +1,4 @@
-package ipapk
+package ipapk // import "https://github.com/tttlkkkl/ipapk"
 
 import (
 	"archive/zip"
@@ -13,15 +13,16 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/DHowett/go-plist"
 	"github.com/andrianbdn/iospng"
 	"github.com/shogo82148/androidbinary"
 	"github.com/shogo82148/androidbinary/apk"
+	"howett.net/plist"
 )
 
 var (
 	reInfoPlist = regexp.MustCompile(`Payload/[^/]+/Info\.plist`)
-	ErrNoIcon   = errors.New("icon not found")
+	// ErrNoIcon icon not found
+	ErrNoIcon = errors.New("icon not found")
 )
 
 const (
@@ -29,9 +30,10 @@ const (
 	androidExt = ".apk"
 )
 
+// AppInfo 应用信息
 type AppInfo struct {
 	Name     string
-	BundleId string
+	BundleID string
 	Version  string
 	Build    string
 	Icon     image.Image
@@ -49,9 +51,10 @@ type iosPlist struct {
 	CFBundleDisplayName  string `plist:"CFBundleDisplayName"`
 	CFBundleVersion      string `plist:"CFBundleVersion"`
 	CFBundleShortVersion string `plist:"CFBundleShortVersionString"`
-	CFBundleIdentifier   string `plist:"CFBundleIdentifier"`
+	CFBundleIDentifier   string `plist:"CFBundleIDentifier"`
 }
 
+// NewAppParser new
 func NewAppParser(name string) (*AppInfo, error) {
 	file, err := os.Open(name)
 	if err != nil {
@@ -139,7 +142,7 @@ func parseApkFile(xmlFile *zip.File) (*AppInfo, error) {
 	}
 
 	info := new(AppInfo)
-	info.BundleId = manifest.Package
+	info.BundleID = manifest.Package
 	info.Version = manifest.VersionName
 	info.Build = manifest.VersionCode
 
@@ -193,7 +196,7 @@ func parseIpaFile(plistFile *zip.File) (*AppInfo, error) {
 	} else {
 		info.Name = p.CFBundleDisplayName
 	}
-	info.BundleId = p.CFBundleIdentifier
+	info.BundleID = p.CFBundleIDentifier
 	info.Version = p.CFBundleShortVersion
 	info.Build = p.CFBundleVersion
 
