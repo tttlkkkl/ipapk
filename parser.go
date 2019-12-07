@@ -1,4 +1,4 @@
-package ipapk // import "https://github.com/tttlkkkl/ipapk"
+package ipapk // import "github.com/tttlkkkl/ipapk"
 
 import (
 	"archive/zip"

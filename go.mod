@@ -1,4 +1,4 @@
-module "https://github.com/tttlkkkl/ipapk"
+module github.com/tttlkkkl/ipapk
 
 go 1.13
 
