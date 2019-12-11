@@ -52,7 +52,7 @@ type iosPlist struct {
 	CFBundleDisplayName  string `plist:"CFBundleDisplayName"`
 	CFBundleVersion      string `plist:"CFBundleVersion"`
 	CFBundleShortVersion string `plist:"CFBundleShortVersionString"`
-	CFBundleIDentifier   string `plist:"CFBundleIDentifier"`
+	CFBundleIDentifier   string `plist:"CFBundleIdentifier"`
 }
 
 // NewAppParser new
