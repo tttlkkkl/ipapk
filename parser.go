@@ -3,12 +3,17 @@ package ipapk // import "github.com/tttlkkkl/ipapk"
 import (
 	"archive/zip"
 	"bytes"
+	"encoding/json"
 	"encoding/xml"
 	"errors"
+	"fmt"
 	"image"
 	"image/png"
 	"io/ioutil"
+	"net/http"
+	"net/url"
 	"os"
+	"path"
 	"path/filepath"
 	"regexp"
 	"strconv"
@@ -233,4 +238,76 @@ func parseIpaIcon(iconFile *zip.File) (image.Image, error) {
 	iospng.PngRevertOptimization(rc, &w)
 
 	return png.Decode(bytes.NewReader(w.Bytes()))
+}
+
+// Lookup https://itunes.apple.com/lookup?bundleId=BundleID
+type Lookup struct {
+	RsultCount int64          `json:"resultCount"`
+	Results    []LookupResult `json:"results"`
+}
+
+// LookupResult 结果
+type LookupResult struct {
+	ScreenshotUrls        []string `json:"screenshotUrls"`
+	IpadScreenshotUrls    []string `json:"ipadScreenshotUrls"`
+	AppletvScreenshotUrls []string `json:"appletvScreenshotUrls"`
+	ArtworkURL60          string   `json:"artworkUrl60"`
+	ArtworkURL512         string   `json:"artworkUrl512"`
+	ArtworkURL100         string   `json:"artworkUrl100"`
+	ArtistViewURL         string   `json:"artistViewUrl"`
+	SupportedDevices      []string `json:"supportedDevices"`
+	LanguageCodesISO2A    []string `json:"languageCodesISO2A"`
+	TrackViewURL          string   `json:"trackViewUrl"`
+}
+
+// StoreURL app store 地址
+type StoreURL string
+
+func (s *StoreURL) String() string {
+	ss := *s
+	return string(ss)
+}
+
+// Cn 中国区地址
+func (s *StoreURL) Cn() string {
+	u, err := url.Parse(s.String())
+	if err != nil {
+		return s.String()
+	}
+	p := strings.Split(strings.TrimSpace(u.Path), "/")
+	if len(p) > 2 {
+		p = p[2:]
+		p = append([]string{"cn"}, p...)
+	}
+	u.Path = path.Join(p...)
+	return u.String()
+}
+
+// GetIosAppStoreAddress 获取app store地址
+func GetIosAppStoreAddress(bundleID string) StoreURL {
+	lk, err := GetLookup(bundleID)
+	if err != nil {
+		return StoreURL("")
+	}
+	if lk.RsultCount > 0 {
+		return StoreURL(lk.Results[0].TrackViewURL)
+	}
+	return StoreURL("")
+}
+
+// GetLookup 获取应用商店信息
+func GetLookup(bundleID string) (*Lookup, error) {
+	var lk Lookup
+	resp, err := http.DefaultClient.Get(fmt.Sprintf("https://itunes.apple.com/lookup?bundleId=%s", bundleID))
+	if err != nil {
+		return &lk, err
+	}
+	bytes, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return &lk, err
+	}
+	if err = json.Unmarshal(bytes, &lk); err != nil {
+		return &lk, err
+	}
+	return &lk, nil
 }

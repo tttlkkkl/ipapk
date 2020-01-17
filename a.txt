@@ -1,0 +1,19 @@
+=== RUN   TestParseAndroidManifest
+--- PASS: TestParseAndroidManifest (0.00s)
+=== RUN   TestParseApkFile
+--- PASS: TestParseApkFile (0.00s)
+=== RUN   TestParseApkIconAndLabel
+--- PASS: TestParseApkIconAndLabel (0.01s)
+=== RUN   TestParseIpaFile
+--- PASS: TestParseIpaFile (0.00s)
+=== RUN   TestParseIpaIcon
+--- PASS: TestParseIpaIcon (0.00s)
+=== RUN   TestStoreURL_Cn
+=== RUN   TestStoreURL_Cn/test_url_1
+=====> https://apps.apple.com/cn/us/app/teamkit/id1421743514?uo=4
+--- FAIL: TestStoreURL_Cn (0.00s)
+    --- FAIL: TestStoreURL_Cn/test_url_1 (0.00s)
+        parser_test.go:169: StoreURL.Cn() = https://apps.apple.com/cn/us/app/teamkit/id1421743514?uo=4, want https://apps.apple.com/cn/app/teamkit/id1421743514?uo=4
+FAIL
+exit status 1
+FAIL	github.com/tttlkkkl/ipapk	0.591s

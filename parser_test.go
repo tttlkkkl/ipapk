@@ -150,3 +150,48 @@ func TestParseIpaIcon(t *testing.T) {
 		t.Errorf("got %v want %v", err, ErrNoIcon)
 	}
 }
+
+func TestStoreURL_Cn(t *testing.T) {
+	tests := []struct {
+		name string
+		s    StoreURL
+		want string
+	}{
+		{
+			name: "test url 1",
+			s:    StoreURL("https://apps.apple.com/us/app/teamkit/id1421743514?uo=4"),
+			want: "https://apps.apple.com/cn/app/teamkit/id1421743514?uo=4",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := tt.s.Cn(); got != tt.want {
+				t.Errorf("StoreURL.Cn() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestGetIosAppStoreAddress(t *testing.T) {
+	type args struct {
+		bundleID string
+	}
+	tests := []struct {
+		name string
+		args args
+		want StoreURL
+	}{
+		{
+			name: "test 1",
+			args: args{"com.ysdn.EPTool"},
+			want: StoreURL("https://apps.apple.com/us/app/teamkit/id1421743514?uo=4"),
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := GetIosAppStoreAddress(tt.args.bundleID); got != tt.want {
+				t.Errorf("GetIosAppStoreAddress() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
