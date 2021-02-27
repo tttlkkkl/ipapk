@@ -20,8 +20,8 @@ import (
 	"strings"
 
 	"github.com/andrianbdn/iospng"
-	"github.com/shogo82148/androidbinary"
-	"github.com/shogo82148/androidbinary/apk"
+	"github.com/tttlkkkl/androidbinary"
+	"github.com/tttlkkkl/androidbinary/apk"
 	"howett.net/plist"
 )
 
